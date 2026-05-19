@@ -38,10 +38,44 @@ El motor acciona un sistema de **trituración** a través de una cadena de trans
 ## 🚀 Demo en vivo
 
 ```
-https://TU_USUARIO.github.io/motorsim-pro/MotorSim-Pro.html
+https://Develooper10.github.io/motorsim-pro/MotorSim-Pro.html
 ```
 
-> ⚠️ Reemplaza `TU_USUARIO` con tu nombre de usuario de GitHub después de activar GitHub Pages.
+---
+
+## 📸 Preview
+
+<p align="center">
+  <img src="assets/preview_1.png" width="95%">
+</p>
+
+<p align="center">
+  <em>Vista principal del simulador y sistema electromecánico.</em>
+</p>
+
+---
+
+## ⚡ Simulación en Tiempo Real
+
+<p align="center">
+  <img src="assets/preview_2.png" width="95%">
+</p>
+
+<p align="center">
+  <em>Monitoreo dinámico de RPM, torque, corriente y eficiencia.</em>
+</p>
+
+---
+
+## 📊 Análisis y Curvas Características
+
+<p align="center">
+  <img src="assets/preview_3.png" width="95%">
+</p>
+
+<p align="center">
+  <em>Visualización de comportamiento electromecánico y curvas de operación.</em>
+</p>
 
 ---
 
