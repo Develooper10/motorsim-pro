@@ -74,6 +74,10 @@ https://Develooper10.github.io/motorsim-pro/MotorSim-Pro.html
 </p>
 
 <p align="center">
+  <img src="assets/preview_4.png" width="95%">
+</p>
+
+<p align="center">
   <em>Visualización de comportamiento electromecánico y curvas de operación.</em>
 </p>
 
