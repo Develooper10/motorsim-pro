@@ -317,6 +317,52 @@ canvas.rp-chart{width:100%;border-radius:var(--r);border:1px solid var(--rule);m
 .mf-field{margin-bottom:12px}
 .mf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
+/* ── PRINT STYLES — solo muestra el reporte ── */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+
+  /* Ocultar TODO excepto el papel del reporte */
+  body > *:not(#print-frame-host) { display: none !important; }
+  .topbar, .tab-bar, .layout, .lpanel, .rpanel,
+  .page, .modal-overlay { display: none !important; }
+
+  /* Mostrar solo el reporte */
+  #reportPaper {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    z-index: 99999 !important;
+  }
+
+  /* Ocultar botones dentro del reporte */
+  .rp-footer .export-row,
+  .exp-btn { display: none !important; }
+
+  /* Tipografía limpia para impresión */
+  body { font-size: 11pt; color: #000; background: #fff; }
+  .rp-title { font-size: 16pt; }
+  .rp-inst  { font-size: 9pt; }
+  .rp-sec-title { font-size: 11pt; page-break-after: avoid; }
+  .rp-table th, .rp-table td { font-size: 9pt; padding: 5px 8px; }
+  .rp-note  { font-size: 9pt; }
+  .rp-kv-val{ font-size: 12pt; }
+
+  /* Saltos de página inteligentes */
+  .rp-section { page-break-inside: avoid; margin-bottom: 16pt; }
+  .rp-table   { page-break-inside: auto; }
+  .rp-table tr{ page-break-inside: avoid; }
+}
+
 </style>
 </head>
 <body>
@@ -661,21 +707,43 @@ canvas.rp-chart{width:100%;border-radius:var(--r);border:1px solid var(--rule);m
 
 <!-- PAGE: CURVAS -->
 <div class="page" id="page-curves">
+  <!-- Toolbar de exportación -->
+  <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--white);border-bottom:1px solid var(--rule);flex-shrink:0">
+    <span style="font-size:.72rem;font-weight:600;color:var(--ink3);margin-right:4px">Exportar:</span>
+    <button class="tbtn tbtn-ghost" style="font-size:.72rem;padding:5px 11px" onclick="exportCurve('cv_tn','Torque_vs_Velocidad')">↓ T–n</button>
+    <button class="tbtn tbtn-ghost" style="font-size:.72rem;padding:5px 11px" onclick="exportCurve('cv_in','Corriente_vs_Velocidad')">↓ Ia–n</button>
+    <button class="tbtn tbtn-ghost" style="font-size:.72rem;padding:5px 11px" onclick="exportCurve('cv_pn','Potencia_vs_Velocidad')">↓ Pmec–n</button>
+    <button class="tbtn tbtn-ghost" style="font-size:.72rem;padding:5px 11px" onclick="exportCurve('cv_en','Eficiencia_vs_Velocidad')">↓ η–n</button>
+    <div style="width:1px;height:20px;background:var(--rule);margin:0 4px"></div>
+    <button class="tbtn tbtn-primary" style="font-size:.72rem;padding:5px 14px" onclick="exportAllCurves()">↓ Exportar las 4 juntas (PNG)</button>
+  </div>
   <div class="curves-grid">
     <div class="cv-cell">
-      <div class="cv-hd"><span class="cv-title">Torque vs. Velocidad</span><span class="cv-sub">Curva T–n</span></div>
+      <div class="cv-hd">
+        <span class="cv-title">Torque vs. Velocidad</span><span class="cv-sub">Curva T–n</span>
+        <button onclick="exportCurve('cv_tn','Torque_vs_Velocidad')" style="margin-left:auto;background:none;border:1px solid var(--rule2);border-radius:4px;padding:2px 8px;font-size:.65rem;cursor:pointer;color:var(--ink3)" title="Exportar PNG">↓ PNG</button>
+      </div>
       <canvas class="cv-canvas" id="cv_tn"></canvas>
     </div>
     <div class="cv-cell">
-      <div class="cv-hd"><span class="cv-title">Corriente vs. Velocidad</span><span class="cv-sub">Ia–n</span></div>
+      <div class="cv-hd">
+        <span class="cv-title">Corriente vs. Velocidad</span><span class="cv-sub">Ia–n</span>
+        <button onclick="exportCurve('cv_in','Corriente_vs_Velocidad')" style="margin-left:auto;background:none;border:1px solid var(--rule2);border-radius:4px;padding:2px 8px;font-size:.65rem;cursor:pointer;color:var(--ink3)" title="Exportar PNG">↓ PNG</button>
+      </div>
       <canvas class="cv-canvas" id="cv_in"></canvas>
     </div>
     <div class="cv-cell">
-      <div class="cv-hd"><span class="cv-title">Potencia Mecánica</span><span class="cv-sub">Pmec vs. n</span></div>
+      <div class="cv-hd">
+        <span class="cv-title">Potencia Mecánica</span><span class="cv-sub">Pmec vs. n</span>
+        <button onclick="exportCurve('cv_pn','Potencia_vs_Velocidad')" style="margin-left:auto;background:none;border:1px solid var(--rule2);border-radius:4px;padding:2px 8px;font-size:.65rem;cursor:pointer;color:var(--ink3)" title="Exportar PNG">↓ PNG</button>
+      </div>
       <canvas class="cv-canvas" id="cv_pn"></canvas>
     </div>
     <div class="cv-cell">
-      <div class="cv-hd"><span class="cv-title">Eficiencia</span><span class="cv-sub">η vs. n</span></div>
+      <div class="cv-hd">
+        <span class="cv-title">Eficiencia</span><span class="cv-sub">η vs. n</span>
+        <button onclick="exportCurve('cv_en','Eficiencia_vs_Velocidad')" style="margin-left:auto;background:none;border:1px solid var(--rule2);border-radius:4px;padding:2px 8px;font-size:.65rem;cursor:pointer;color:var(--ink3)" title="Exportar PNG">↓ PNG</button>
+      </div>
       <canvas class="cv-canvas" id="cv_en"></canvas>
     </div>
   </div>
@@ -737,7 +805,7 @@ canvas.rp-chart{width:100%;border-radius:var(--r);border:1px solid var(--rule);m
         <div class="rp-footer-note">Generado automáticamente por MotorSim Pro — Datos de simulación numérica</div>
         <div class="export-row">
           <button class="exp-btn exp-csv" onclick="exportCSV()">⬇ Exportar CSV</button>
-          <button class="exp-btn exp-print" onclick="window.print()">🖨 Imprimir</button>
+          <button class="exp-btn exp-print" onclick="printReport()">🖨 Imprimir / Guardar PDF</button>
         </div>
       </div>
     </div>
@@ -1791,6 +1859,210 @@ function exportCSV(){
   const a=document.createElement('a'); a.href=url;
   a.download=`MotorSim_Pro_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════════════════
+//  PNG EXPORT — curva individual
+// ══════════════════════════════════════════════════════════
+function exportCurve(canvasId, filename) {
+  // Renderizar a alta resolución en canvas temporal (2×)
+  const src = document.getElementById(canvasId);
+  if(!src){ alert('Genera las curvas primero iniciando la simulación.'); return; }
+
+  const SCALE = 2;
+  const W = src.width * SCALE;
+  const H = src.height * SCALE;
+
+  const tmp = document.createElement('canvas');
+  tmp.width  = W;
+  tmp.height = H;
+  const ctx = tmp.getContext('2d');
+
+  // Fondo blanco
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Escalar y redibujar la curva en alta res
+  ctx.scale(SCALE, SCALE);
+  ctx.drawImage(src, 0, 0);
+
+  // Watermark discreto
+  ctx.setTransform(1,0,0,1,0,0); // reset scale
+  ctx.fillStyle = 'rgba(100,96,90,0.35)';
+  ctx.font = `${10*SCALE}px DM Mono, monospace`;
+  ctx.textAlign = 'right';
+  ctx.fillText('MotorSim Pro — UIS E3T', W - 12, H - 10);
+
+  const link = document.createElement('a');
+  link.download = `${filename}_${new Date().toISOString().slice(0,10)}.png`;
+  link.href = tmp.toDataURL('image/png');
+  link.click();
+}
+
+// ══════════════════════════════════════════════════════════
+//  PNG EXPORT — las 4 curvas juntas en un solo PNG
+// ══════════════════════════════════════════════════════════
+function exportAllCurves() {
+  const ids    = ['cv_tn','cv_in','cv_pn','cv_en'];
+  const titles = ['Torque vs. Velocidad (T–n)',
+                  'Corriente vs. Velocidad (Ia–n)',
+                  'Potencia Mecánica (Pmec–n)',
+                  'Eficiencia (η–n)'];
+
+  const sources = ids.map(id => document.getElementById(id));
+  if(sources.some(s=>!s)){ alert('Genera las curvas primero.'); return; }
+
+  // Tamaño de cada sub-gráfica
+  const cW = sources[0].width  || 400;
+  const cH = sources[0].height || 300;
+  const PAD  = 20;  // padding interior
+  const HEADER = 54; // altura del encabezado general
+  const FOOTER = 30;
+  const TITLE_H = 22; // altura del título de cada sub-gráfica
+
+  const SCALE  = 2;
+  const cols   = 2, rows = 2;
+  const totalW = (cW + PAD) * cols + PAD;
+  const totalH = HEADER + (cH + TITLE_H + PAD) * rows + PAD + FOOTER;
+
+  const tmp = document.createElement('canvas');
+  tmp.width  = totalW * SCALE;
+  tmp.height = totalH * SCALE;
+  const ctx = tmp.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+
+  // Fondo
+  ctx.fillStyle = '#f8f7f4';
+  ctx.fillRect(0, 0, totalW, totalH);
+
+  // Header
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, totalW, HEADER);
+  ctx.fillStyle = '#1a1916';
+  ctx.font = `bold 15px 'DM Sans', sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.fillText('MotorSim Pro — Curvas Características del Motor DC', PAD, 22);
+  ctx.fillStyle = '#6b6860';
+  ctx.font = `11px 'DM Mono', monospace`;
+  const p = getP();
+  ctx.fillText(
+    `Va=${p.Va}V  Ra=${p.Ra.toFixed(2)}Ω  Km=${p.Km.toFixed(3)}  n=${Math.round(omega*60/(2*Math.PI))} rpm — ${new Date().toLocaleDateString('es-CO')}`,
+    PAD, 40
+  );
+  // línea divisoria
+  ctx.strokeStyle = '#d4d1ca';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, HEADER-1); ctx.lineTo(totalW, HEADER-1); ctx.stroke();
+
+  // Dibujar cada sub-gráfica
+  sources.forEach((src, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x   = PAD + col * (cW + PAD);
+    const y   = HEADER + PAD + row * (cH + TITLE_H + PAD);
+
+    // Fondo tarjeta
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(x - 4, y - 4, cW + 8, cH + TITLE_H + 8, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#e8e5df';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Título sub-gráfica
+    ctx.fillStyle = '#1a1916';
+    ctx.font = `bold 10px 'DM Sans', sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText(titles[i], x, y + 13);
+
+    // Canvas
+    ctx.drawImage(src, x, y + TITLE_H, cW, cH);
+  });
+
+  // Footer
+  ctx.fillStyle = '#9b9890';
+  ctx.font = `9px 'DM Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText(
+    'Universidad Industrial de Santander — E3T  |  Laboratorio de Máquinas Eléctricas  |  MotorSim Pro v3.0',
+    totalW / 2, totalH - 10
+  );
+
+  const link = document.createElement('a');
+  link.download = `CurvasCaracteristicas_MotorDC_${new Date().toISOString().slice(0,10)}.png`;
+  link.href = tmp.toDataURL('image/png');
+  link.click();
+}
+
+// ══════════════════════════════════════════════════════════
+//  PRINT REPORT — solo el papel, sin la UI
+// ══════════════════════════════════════════════════════════
+function printReport() {
+  // Asegurar que el reporte esté generado
+  buildReport();
+
+  // Crear ventana de impresión aislada
+  const paper = document.getElementById('reportPaper');
+  if(!paper){ window.print(); return; }
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if(!win){ alert('Permite ventanas emergentes para imprimir.'); return; }
+
+  // Estilos mínimos para impresión limpia
+  win.document.write(`<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<title>Reporte — MotorSim Pro</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;font-size:11pt;color:#1a1916;background:#fff;padding:10mm}
+  h1,h2,h3{font-family:'Syne',sans-serif}
+  .rp-inst{font-size:9pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6860;margin-bottom:4px;font-family:'Syne',sans-serif}
+  .rp-title{font-size:16pt;font-weight:800;color:#1a1916;line-height:1.2;margin-bottom:6px;font-family:'Syne',sans-serif}
+  .rp-sub{font-size:10pt;color:#6b6860;margin-bottom:8px}
+  .rp-header{border-bottom:2px solid #1a1916;padding-bottom:14px;margin-bottom:20px}
+  .rp-meta{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap}
+  .rp-meta-item{font-size:8.5pt;color:#9b9890}
+  .rp-meta-item strong{color:#3d3b36}
+  .rp-section{margin-bottom:22px;page-break-inside:avoid}
+  .rp-sec-title{font-family:'Syne',sans-serif;font-size:10pt;font-weight:700;color:#1a1916;
+    margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #d4d1ca;page-break-after:avoid}
+  .rp-table{width:100%;border-collapse:collapse;margin-bottom:10px}
+  .rp-table th{background:#f5f4f1;padding:6px 9px;text-align:left;font-size:8pt;
+    font-weight:600;color:#3d3b36;border-bottom:1px solid #c4c1b8}
+  .rp-table td{padding:5px 9px;font-size:8.5pt;border-bottom:1px solid #eceae5;
+    font-family:'DM Mono',monospace;color:#1a1916}
+  .rp-table td:first-child{font-family:'DM Sans',sans-serif;color:#3d3b36;font-weight:500}
+  .rp-table tr:last-child td{border-bottom:none}
+  .rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .rp-kv{background:#f5f4f1;border-radius:4px;padding:8px 10px}
+  .rp-kv-label{font-size:7.5pt;color:#9b9890;margin-bottom:2px;font-weight:500}
+  .rp-kv-val{font-family:'DM Mono',monospace;font-size:11pt;color:#1a1916;font-weight:500}
+  .rp-kv-unit{font-size:7.5pt;color:#9b9890}
+  .rp-note{font-size:8.5pt;color:#3d3b36;line-height:1.6;padding:9px 12px;
+    background:#f5f4f1;border-left:3px solid #1a4fd6;border-radius:0 4px 4px 0;margin-bottom:10px}
+  .rp-footer{border-top:1px solid #d4d1ca;padding-top:12px;margin-top:20px;
+    display:flex;justify-content:space-between;align-items:center}
+  .rp-footer-note{font-size:7.5pt;color:#9b9890}
+  .export-row{display:none}
+  @media print{
+    @page{size:A4;margin:16mm 14mm}
+    body{padding:0}
+    .rp-section{page-break-inside:avoid}
+  }
+</style>
+</head><body>
+${paper.outerHTML}
+<script>
+  // Ocultar botones en la ventana de impresión
+  document.querySelectorAll('.exp-btn,.export-row').forEach(el=>el.style.display='none');
+  // Imprimir automáticamente
+  window.onload=function(){ window.focus(); setTimeout(()=>{ window.print(); window.close(); },600); };
+<\/script>
+</body></html>`);
+  win.document.close();
 }
 
 // ══════════════════════════════════════════════════════════
